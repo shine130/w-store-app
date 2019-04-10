@@ -1,9 +1,10 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View } from '@tarojs/components'
-import { AtPagination } from 'taro-ui'
+import { AtPagination, AtActivityIndicator } from 'taro-ui'
+import _ from 'lodash'
 import SearchBar from '../../components/search-bar'
 import ProductList from '../../components/product-list'
-import Placeholder from '../../components/placeholder'
+import Placeholder from '../../components/placeholder';
 import fetchData from '../../utilities/fetch-data'
 
 class ShopIndex extends Component {
@@ -20,7 +21,52 @@ class ShopIndex extends Component {
     total:0,
     pageSize:2,
     current:1,
-    serviceError:false
+    serviceError:false,
+    search:'',
+    searching:false,
+    errorPageMessage:''
+  }
+
+  search(value=''){
+    console.log(`搜索: ${value}`)
+
+    this.setState({
+      searching:true,
+      current:1
+    }, () => {
+      this.fetchData({
+        resource:'products',
+        search:value,
+        page:this.state.current,
+        pageSize:this.state.pageSize,
+        success:this.fetchDataSuccess.bind(this),
+        fail:this.fetchDataFail.bind(this),
+        complete:this.fetchDataComplete.bind(this)
+      })
+    })
+
+
+  }
+
+  debounceSearch = _.debounce(this.search,500)
+
+  onChangeSearchBar(value){
+    console.log(value)
+    this.setState({
+      search:value
+    },() => {
+      this.debounceSearch(this.state.search)
+    })
+  }
+
+  onActionClickSearchBar(){
+    this.search(this.state.search)
+    console.log('action click search')
+  }
+
+  onConfirmSearchBar(){
+    this.search(this.state.search)
+    console.log('confirm search')
   }
 
   fetchDataSuccess(response){
@@ -29,13 +75,29 @@ class ShopIndex extends Component {
     this.setState({
       products:data,
       placeholder:false,
+      serviceError:false,
       total:header['X-Total-Count']
+    })
+
+    if(data.length === 0){
+      this.setState({
+        serviceError:true,
+        errorPageMessage:'没有可以显示的内容。'
+      })
+    }
+
+  }
+
+  fetchDataFail(error){
+    this.setState({
+      serviceError:true,
+      errorPageMessage:error.message
     })
   }
 
-  fetchDataFail(){
+  fetchDataComplete(){
     this.setState({
-      serviceError:true
+      searching:false
     })
   }
 
@@ -65,32 +127,42 @@ class ShopIndex extends Component {
   }
 
   render() {
-    const { products ,placeholder,total,pageSize,current,serviceError } = this.state
+    const { products ,placeholder,total,pageSize,current,serviceError,searching } = this.state
 
     const page = (
       <View>
-        <SearchBar />
+ 
         <Placeholder quantity={pageSize} show={placeholder} />
         {!placeholder && <ProductList data={products} />}
-        <AtPagination
-          icon
-          total={parseInt(total)}
-          pageSize={pageSize}
-          current={current}
-          className="my-4"
-          onPageChange={this.onPageChange.bind(this)}
-        />
+        {total > pageSize &&
+            <AtPagination
+            icon
+            total={parseInt(total)}
+            pageSize={pageSize}
+            current={current}
+            className="my-4"
+            onPageChange={this.onPageChange.bind(this)}
+          />
+
+        }
       </View>
     )
 
     const errorPage = (
       <View className="page-demo">
-        服务出现问题，请稍后再试
+        {this.state.errorPageMessage}
       </View>
     )
 
     return (
       <View>
+       <SearchBar
+          value={this.state.search}
+          onChange={this.onChangeSearchBar.bind(this)}
+          onActionClick={this.onActionClickSearchBar.bind(this)}
+          onConfirm={this.onConfirmSearchBar.bind(this)}
+        />
+        {searching && <AtActivityIndicator content='搜索中...' className='position-absolute m-3' />}
         {serviceError ? errorPage:page}
       </View>
     )
