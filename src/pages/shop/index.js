@@ -6,13 +6,16 @@ import SearchBar from '../../components/search-bar'
 import ProductList from '../../components/product-list'
 import Placeholder from '../../components/placeholder';
 import fetchData from '../../utilities/fetch-data'
+import ErrorPage from '../../components/error-page'
 
 class ShopIndex extends Component {
   constructor(){
     this.fetchData = fetchData
   }
   config = {
-    navigationBarTitleText:'W-Store'
+    navigationBarTitleText:'W-Store',
+    enablePullDownRefresh:true,
+    backgroundTextStyle:'dark'
   }
 
   state = {
@@ -25,6 +28,24 @@ class ShopIndex extends Component {
     search:'',
     searching:false,
     errorPageMessage:''
+  }
+
+  onPullDownRefresh(){
+    this.setState({
+      serviceError:false,
+      current:1
+    }, () => {
+      this.fetchData({
+        resource:'products',
+        search:this.state.search,
+        page:this.state.current,
+        pageSize:this.state.pageSize,
+        success:this.fetchDataSuccess.bind(this),
+        fail:this.fetchDataFail.bind(this),
+        complete:this.fetchDataComplete.bind(this)
+      })
+
+    })
   }
 
   search(value=''){
@@ -99,6 +120,9 @@ class ShopIndex extends Component {
     this.setState({
       searching:false
     })
+
+    Taro.stopPullDownRefresh()
+
   }
 
   async componentWillMount(){
@@ -126,14 +150,22 @@ class ShopIndex extends Component {
     })
   }
 
+  onClickListItem(product){
+    const { id ,name} = product
+
+    Taro.navigateTo({
+      url:`/pages/product/show?id=${id}&name=${name}`
+    })
+  }
+
   render() {
-    const { products ,placeholder,total,pageSize,current,serviceError,searching } = this.state
+    const { products ,placeholder,total,pageSize,current,serviceError,searching ,errorPageMessage} = this.state
 
     const page = (
       <View>
  
         <Placeholder quantity={pageSize} show={placeholder} />
-        {!placeholder && <ProductList data={products} />}
+        {!placeholder && <ProductList data={products} onClickListItem={this.onClickListItem} />}
         {total > pageSize &&
             <AtPagination
             icon
@@ -148,11 +180,7 @@ class ShopIndex extends Component {
       </View>
     )
 
-    const errorPage = (
-      <View className="page-demo">
-        {this.state.errorPageMessage}
-      </View>
-    )
+    const errorPage = <ErrorPage content={errorPageMessage} />
 
     return (
       <View>
