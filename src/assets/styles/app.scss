@@ -1,8 +1,8 @@
-@import "_variable_overrides";
+@import "variable_overrides";
 @import "~taro-ui/dist/style/index.scss";
 @import "variables";
 @import "utilities";
 @import "page";
 @import "card";
-@import "utilities/text";
 @import "placeholder";
+@import "wxparse";

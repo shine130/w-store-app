@@ -35,7 +35,7 @@
 					"id": 0,
 					"name": "内容页",
 					"pathName": "pages/product/show",
-					"query": "id=3&name=秘鲁琼卡丽咖啡豆",
+					"query": "id=1&name=坦桑尼亚穆丽瓦咖啡豆",
 					"scene": null
 				}
 			]
