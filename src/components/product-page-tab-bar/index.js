@@ -37,14 +37,14 @@ class ProductPageTabBar extends Component {
     const primaryItem = (
 
       <View className='tab-bar__item'>
-        <AtButton onClick={this.handleClick.bind(this, 'primary')} disabled={disabled} type='primary'>{disabled ? disabledText:primary}</AtButton>
+        <AtButton onClick={this.handleClick.bind(this, 'primary',primary)} disabled={disabled} type='primary'>{disabled ? disabledText:primary}</AtButton>
       </View>
     )
 
     const secondaryItem =(
 
       <View className='tab-bar__item'>
-        <AtButton onClick={this.handleClick.bind(this, 'secondary')} disabled={disabled} type='secondary'>{secondary}</AtButton>
+        <AtButton onClick={this.handleClick.bind(this, 'secondary',secondary)} disabled={disabled} type='secondary'>{secondary}</AtButton>
       </View>
     )
 
