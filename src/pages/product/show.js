@@ -5,6 +5,7 @@ import Placeholder from '../../components/placeholder'
 import ErrorPage from '../../components/error-page'
 import ProductPageCard from '../../components/product-page-card'
 import ProductPageTab from '../../components/product-page-tab'
+import ProductPageTabBar from '../../components/product-page-tab-bar'
 
 class ProductShow extends Component{
   config = {
@@ -96,7 +97,9 @@ class ProductShow extends Component{
       activeTab
     })
   }
-
+  onClickTabBar(item){
+    console.log(`点击：${item}`)
+  }
   render(){
     const { product ,placeholder ,serviceError,errorPageMessage,indicatorDots,activeTab} = this.state
     const tabList = [
@@ -111,7 +114,15 @@ class ProductShow extends Component{
       <View>
         <ProductPageCard data={product} indicatorDots={indicatorDots} />
         <ProductPageTab data={product} tabList={tabList} activeTab={activeTab} onClick={this.onClickTab} /> 
-
+        <ProductPageTabBar
+        primary='立即购买'
+        secondary='加入购物袋'
+        icon='shopping_basket'
+        disabled={false}
+        disabledText='暂时无货'
+        onClick={this.onClickTabBar}
+        dot
+        />
 </View>
         }
       </View>
