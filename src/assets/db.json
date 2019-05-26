@@ -1,24 +1,7 @@
 {
   "cart": {
-    "total": 376,
-    "items": [
-      {
-        "product_id": 4,
-        "name": "埃塞俄比亚赛其索咖啡豆",
-        "image": "https://resources.ninghao.net/w-store/images/ethiopia.jpg",
-        "price": "198",
-        "quantity": 1,
-        "total": 198
-      },
-      {
-        "product_id": 3,
-        "name": "秘鲁琼卡丽咖啡豆",
-        "image": "https://resources.ninghao.net/w-store/images/peru-chontali.jpg",
-        "price": "178",
-        "quantity": 1,
-        "total": 178
-      }
-    ]
+    "total": 0,
+    "items": []
   },
   "users": [
     {
